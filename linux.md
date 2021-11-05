@@ -454,3 +454,18 @@ network:
      nameservers:
        addresses: [8.8.8.8,8.8.4.4]
 ````
+
+### Habilitar puertos
+Libreria utilizada para interactuar con iptables 
+````bash
+sudo ufw allow 30777
+````
+
+
+## Autologin Vscode
+funcionamiento: la máquina que se quiere conectar a otra genera un par de claves, una pública y otra privadad
+#
+para generar el certificado en windows desde cmd.
+````cmd
+ssh-keygen -t rsa -b 4096
+````

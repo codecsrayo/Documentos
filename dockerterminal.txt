@@ -1,0 +1,134 @@
+﻿docker -v ---> version de docker
+
+docker pull httpd ---> descargar cualquier paquete
+
+docker images ---> ver todas las imagenes
+
+docker ps ---> ver todos los contenedores con sus detalles
+
+docker ps -a---> ver los contenedores que se ejecutaron,salieron,detuvieron
+                 con sus detalles
+
+docker exec -it ID X bash ---> ingresar dentro de la imagen
+
+docker rm ID X --->eliminar un contenedor
+docker ps -a
+
+Eliminar una imagen de un contenedor
+https://www.digitalocean.com/community/tutorials/how-to-remove-docker-images-containers-and-volumes-es
+docker ps -a 
+docker rm ID X del contenedor
+docker container stop ID X
+docker images
+docker rmi ID X de la imagen
+
+Eliminar contenedor
+docker rm -f nombre del contenedor determined_kapitsa
+docker rm -fv nombre del contenedor determined_kapitsa
+
+docker run -d --name angulartest -p 81:80 angular11:latest
+nombre para contenedor
+
+revisar los config de volumenes
+docker volume
+docker volume ls ---> listar o ver los volumenes
+
+                puerto externo     puerto interno
+                   |   -------------|
+                   |   |
+docker run -d -p 8080:80 docker-angular:latest 
+
+docker info---revisar a detalle toda la info de docker
+
+
+docker build . -t docker-angular:latest
+
+docker y angular
+docker build -t docker-angular:latest --build-arg configuration="staging" .
+docker run -d -p 80:80 docker-angular:latest
+
+docker build -t frontend-distributors:latest .
+docker run -d -p 80:80 frontend-distributors:latest
+
+docker rm -fv web
+
+docker images | grep mongo--->para buscar nombre de imagenes especifico
+
+local a ubuntu
+http://192.168.56.1:8001/admin/
+
+docker –help
+docker –run
+Install-Module DockerProvider -Force
+Install-Package Docker  -ProviderName -DockerProvider -Force
+docker pull microsoft/windowsservercore
+docker images
+docker version
+hostname
+Install-WindowsFeature web-server
+echo "BIENVENIDOS A VENTANA DE TECNOLOGIA CONTAINERS WINDOWS SERVER 2016 " >C:\windows\wwwroot\index.html
+
+no matching manifest for windows/amd64 10.0.17763 in the manifest list entries
+
+bcdedit/set {current} hypervisorlaunchtype auto
+bcdedit/set {current} hypervisorlaunchtype off
+
+
+# Actualiza los repos
+sudo apt-get update
+
+# Instala utilidades
+sudo apt-get install apt-transport-https ca-certificates curl software-properties-common -y
+
+# Agregar el gpg 
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+# Agregar el repo
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+
+# Actualizar de nuevo
+sudo apt-get update
+
+# Instalar docker
+sudo apt-get install docker-ce
+
+# Iniciarlo con el sistema
+sudo systemctl enable docker
+
+# Agregar usuario al grupo docker 
+whoami # Saber el nombre de tu usuario
+sudo usermod -aG docker nombre_de_salida_en_whoami
+
+# Salir de la sesión
+exit
+
+docker -v
+
+docker build -t frontend-distributors:latest .
+docker run -d -p 80:80 frontend-distributors:latest
+docker run -d -p 81:80 frontend-distributors:latest
+
+kPAVV3LKGjecCC8
+
+docker images -f dangling=true --filtrar las imagenes que han sido modificadas
+
+docker images -f dangling=true -q --muestra solo Ids de la imagenes en estado none
+
+docker images -f dangling=true -q | xargs docker rmi --Borrar todas las imagenes de none
+
+renombrar un contenedor
+
+docker ps
+reverent_meninsky
+
+docker rename reverent_meninsky jenkins
+docker ps
+jenkins
+
+docker restart nombre del contenedor o ID
+
+entrar al contenedor
+
+docker exec -ti nombre del contenedor bash
+
+sudo mount -t vboxsf Share /media/Share

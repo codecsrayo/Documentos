@@ -1,4 +1,39 @@
 
+
+## Instalación de postgres *ubuntu*
+ - [`enlace útil`](http://support.ptc.com/help/thingworx_hc/thingworx_8_hc/es/index.html#page/ThingWorx/Help/Installation/Installation/install_and_configure_postgresql_Ubuntu.html)
+````bash
+sudo apt install postgresql postgresql-contrib
+sudo -u postgres psql -c "ALTER ROLE postgres WITH password '<unique PostgreSQL password>'"
+sudo service postgresql restart
+sudo nano /etc/postgresql/1.x/main/pg_hba.conf
+````
+- agregar
+````config
+host	all	all	 0.0.0.0/0		md5
+host	all	all	 ::0/0          md5
+```` 
+- luego ejecutar:
+````bash
+sudo nano /etc/postgresql/1.x/main/postgresql.conf
+````
+- descomentar o agregar
+````config
+# Listen on all addresses. Requires restart.
+listen_addresses = '*'
+```` 
+- configuraciónes adicionales
+````bash
+sudo usermod -aG sudo postgres
+sudo passwd postgres
+````
+- Agregar nuevo usuario
+````bash
+sudo -u postgres createuser --interactive
+````
+## Tunning DB
+Mejorar el [`rendimiento`](https://www.enterprisedb.com/postgres-tutorials/how-tune-postgresql-memory) de la BD
+
 ## PSQL
 
 Magic words:
@@ -78,6 +113,17 @@ log_line_prefix = '%t %u %d %a '
 ## Create command
 
 There are many `CREATE` choices, like `CREATE DATABASE __database_name__`, `CREATE TABLE __table_name__` ... Parameters differ but can be checked [at the official documentation](https://www.postgresql.org/search/?u=%2Fdocs%2F9.1%2F&q=CREATE).
+
+## Sessiones
+-  Mostrar el tiempo que caduca cada sesión inactiva
+````sql
+show idle_in_transaction_session_timeout;
+````
+- Establecer el tiempo de caducidad de cada session inactiva
+````sql
+SET SESSION idle_in_transaction_session_timeout = '5min';
+````
+
 
 ## Handy queries
 - `SELECT * FROM pg_proc WHERE proname='__procedurename__'`: List procedure/function
@@ -206,14 +252,34 @@ SELECT grantee, privilege_type
 FROM information_schema.role_table_grants
 WHERE table_name='name-of-the-table';
 ```
-
-- Kill all Connections:
+### Kill Conexiónes
+- terminar conexiones en la misma base de datos:
 ```sql
 SELECT pg_terminate_backend(pg_stat_activity.pid)
 FROM pg_stat_activity
 WHERE datname = current_database() AND pid <> pg_backend_pid();
 ```
+- terminar conexiones en base de datos especifica:
+````bash
+SELECT pg_terminate_backend(pg_stat_activity.pid)
+FROM pg_stat_activity
+WHERE pg_stat_activity.datname = 'database_name';
+````
+- bloquear conexiones futuras a la BD:
+````bash
+REVOKE CONNECT ON DATABASE "database_name" FROM public;
+````
+- permitir las conexiones futuras
+````bash
+GRANT CONNECT ON DATABASE "database_name" TO public;
+````
 
+### Info Schemas
+- extrae información de una tabla especifica.
+````sql
+select column_name, data_type, character_maximum_length, column_default, is_nullable
+from INFORMATION_SCHEMA.COLUMNS where table_name = 'table';
+````
 
 ## Keyboard shortcuts
 - `CTRL` + `R`: reverse-i-search
@@ -237,3 +303,58 @@ $ source $HOME/.editrc
 - [A Performance Cheat Sheet for PostgreSQL](https://severalnines.com/blog/performance-cheat-sheet-postgresql): Great explanations of `EXPLAIN`, `EXPLAIN ANALYZE`, `VACUUM`, configuration parameters and more. Quite interesting if you need to tune-up a postgres setup.
 - [annotated.conf](https://github.com/jberkus/annotated.conf): Annotations of all 269 postgresql.conf settings for PostgreSQL 10.
 - `psql -c "\l+" -H -q postgres > out.html`: Generate a html report of your databases (source: [Daniel Westermann](https://twitter.com/westermanndanie/status/1242117182982586372))
+
+## Delete Columns
+
+Introduction to PostgreSQL DROP COLUMN clause
+To drop a column of a table, you use the DROP COLUMN clause in the ALTER TABLE statement as follows:
+
+````sql
+ALTER TABLE table_name 
+DROP COLUMN column_name;
+````
+Code language: SQL (Structured Query Language) (sql)
+When you remove a column from a table, PostgreSQL will automatically remove all of the indexes and constraints that involved the dropped column.
+
+If the column that you want to remove is used in other database objects such as views, triggers, stored procedures, etc., you cannot drop the column because other objects are depending on it. In this case, you need to add the CASCADE option to the DROP COLUMN clause to drop the column and all of its dependent objects:
+
+````sql
+ALTER TABLE table_name 
+DROP COLUMN column_name CASCADE;
+````
+Code language: SQL (Structured Query Language) (sql)
+If you remove a column that does not exist, PostgreSQL will issue an error. To remove a column only if it exists, you can add the IF EXISTS option as follows:
+
+````sql
+ALTER TABLE table_name 
+DROP COLUMN IF EXISTS column_name;
+````
+Code language: SQL (Structured Query Language) (sql)
+In this form, if you remove a column that does not exist, PostgreSQL will issue a notice instead of an error.
+
+If you want to drop multiple columns of a table in a single command, you use multiple DROP COLUMN clause like this:
+````sql
+ALTER TABLE table_name
+DROP COLUMN column_name1,
+DROP COLUMN column_name2,
+...;
+````
+Code language: SQL (Structured Query Language) (sql)
+Notice that you need to add a comma (,) after each DROP COLUMN clause.
+
+If a table has one column, you can use drop it using the ALTER TABLE DROP COLUMN statement. The table has no column then. This is possible in PostgreSQL, but not possible according to SQL standard.
+
+Let’s look at some examples to see how the ALTER TABLE DROP COLUMN statement works.
+
+### Creacion de indíces
+````sql
+CREATE INDEX name_index ON table_name("CAMP_1", "CAMP_"") 
+
+````
+
+### Borrar Indices
+````sql
+DROP INDEX name_index
+````
+
+
