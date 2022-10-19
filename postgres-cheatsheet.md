@@ -357,4 +357,9 @@ CREATE INDEX name_index ON table_name("CAMP_1", "CAMP_"")
 DROP INDEX name_index
 ````
 
-
+### Extract metadata info
+````sql
+SELECT table_schema, table_name, column_name, data_type 
+FROM INFORMATION_SCHEMA.COLUMNS 
+WHERE table_name = 'table_name'
+````
